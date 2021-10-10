@@ -3,7 +3,7 @@ from geopy.geocoders import Nominatim
 import openrouteservice
 from openrouteservice.directions import directions
 
-geolocator = Nominatim(user_agent="none")
+geolocator = Nominatim(user_agent="SMS-Directions")
 
 def getroute(start_addr, end_addr):
 
@@ -17,13 +17,12 @@ def getroute(start_addr, end_addr):
         routes = directions(client, coords)
         route_found = True
     except:
-        # Route not found or addresses invalid
+        # Route not found or addresses invalid (or api key missing)
         route_found = False
-
-
+        
 
     if route_found:
-        # Segments (nested dict inside 'routes') contains steps, waypoint etc.
+        # Segments (nested dict inside 'routes') contains steps, waypoints etc.
         # Get total distance and time
         segments_dict = (routes.get('routes')[0]).get('segments')[0]
         dist_total = round(segments_dict.get('distance')/1000, 1)
@@ -43,6 +42,6 @@ def getroute(start_addr, end_addr):
             route_string += instruction + ', go ' + distance + '\n\n'
 
     elif not route_found:
-        route_string += 'No route was found. Double check the addresses.'
+        route_string = 'No route was found. Double check the addresses.'
     
     return route_string
